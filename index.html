@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoverCare | Portal de Acesso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --azul: #062B63;
+      --azul-2: #005CE6;
+      --azul-3: #1A3A6B;
+      --verde: #00A99D;
+      --verde-2: #008F86;
+      --verde-3: #00C4B8;
+      --fundo: #F3F8FC;
+      --card: #FFFFFF;
+      --texto: #0B1F3A;
+      --cinza: #667085;
+      --cinza-2: #98A2B3;
+      --borda: #E3EAF2;
+      --sombra: 0 4px 24px rgba(6, 43, 99, 0.08);
+      --sombra-hover: 0 12px 32px rgba(6, 43, 99, 0.14);
+      --radius: 16px;
+      --radius-lg: 24px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #F8FBFF 0%, #EEF5FC 50%, #F0F9F8 100%);
+      color: var(--texto);
+      font-family: "Poppins", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .bg-orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 92, 230, 0.4), transparent 70%);
+      top: -120px;
+      left: -100px;
+      animation: orbFloat1 18s ease-in-out infinite;
+    }
+
+    .bg-orb-2 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(0, 169, 157, 0.35), transparent 70%);
+      top: 30%;
+      right: -120px;
+      animation: orbFloat2 22s ease-in-out infinite;
+    }
+
+    .bg-orb-3 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(0, 92, 230, 0.25), transparent 70%);
+      bottom: -80px;
+      left: 30%;
+      animation: orbFloat3 20s ease-in-out infinite;
+    }
+
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(60px, 40px) scale(1.1); }
+      66% { transform: translate(-30px, 70px) scale(0.95); }
+    }
+
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-50px, -30px) scale(1.05); }
+      66% { transform: translate(40px, -60px) scale(0.9); }
+    }
+
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -40px) scale(1.08); }
+      66% { transform: translate(-60px, 20px) scale(0.92); }
+    }
+
+    .container {
+      width: min(1200px, 92%);
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      padding: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(227, 234, 242, 0.6);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 12px;
+    }
+
+    .brand-logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    .brand-img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--borda);
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: var(--cinza);
+      font-size: 13px;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--verde);
+      box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Hero Section */
+    .hero {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .hero-content {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      border: 1px solid var(--borda);
+      border-radius: var(--radius-lg);
+      padding: 48px 44px;
+      box-shadow: var(--sombra);
+      backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--azul-2), var(--verde));
+    }
+
+    .hero-logo {
+      width: 0%;
+      max-width: 100%;
+      margin-bottom: 24px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #E7F8F6, #D4F5F2);
+      color: var(--verde-2);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    .tag i {
+      font-size: 10px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.15;
+      color: var(--azul);
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      max-width: 520px;
+      color: var(--cinza);
+      font-size: 15px;
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    .quick-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .main-btn {
+      text-decoration: none;
+      color: white;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--azul-2), #0046B8);
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 16px rgba(0, 92, 230, 0.25);
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+    }
+
+    .main-btn.green {
+      background: linear-gradient(135deg, var(--verde), var(--verde-2));
+      box-shadow: 0 4px 16px rgba(0, 169, 157, 0.25);
+    }
+
+    .main-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 92, 230, 0.35);
+    }
+
+    .main-btn.green:hover {
+      box-shadow: 0 8px 24px rgba(0, 169, 157, 0.35);
+    }
+
+    .main-btn i {
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+
+    .main-btn:hover i {
+      transform: translateX(3px);
+    }
+
+    /* Side Panel */
+    .side-panel {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--borda);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--sombra);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-panel h2 {
+      color: var(--azul);
+      font-size: 20px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .side-panel h2 i {
+      color: var(--azul-2);
+      font-size: 18px;
+    }
+
+    .notice {
+      padding: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #F8FBFF, #F4FAFF);
+      border: 1px solid #E8F0FA;
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+
+    .notice:last-child {
+      margin-bottom: 0;
+    }
+
+    .notice:hover {
+      border-color: #D0E2F5;
+      box-shadow: 0 2px 8px rgba(6, 43, 99, 0.04);
+    }
+
+    .notice-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .notice-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .notice-icon.blue {
+      background: #E8F0FA;
+      color: var(--azul-2);
+    }
+
+    .notice-icon.green {
+      background: #E7F8F6;
+      color: var(--verde);
+    }
+
+    .notice-icon.orange {
+      background: #FFF4E8;
+      color: #E67E22;
+    }
+
+    .notice strong {
+      color: var(--azul);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice span {
+      color: var(--cinza);
+      font-size: 13px;
+      line-height: 1.55;
+      display: block;
+      padding-left: 42px;
+    }
+
+    /* Section Title */
+    .section-title {
+      margin: 52px 0 24px;
+    }
+
+    .section-title h2 {
+      color: var(--azul);
+      font-size: 26px;
+      letter-spacing: -0.8px;
+      font-weight: 700;
+    }
+
+    .section-title p {
+      color: var(--cinza);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    /* Grid Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding-bottom: 60px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--borda);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-decoration: none;
+      color: var(--texto);
+      box-shadow: var(--sombra);
+      transition: var(--transition);
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--azul-2), var(--verde));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--sombra-hover);
+      border-color: rgba(0, 92, 230, 0.2);
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 20px;
+      transition: var(--transition);
+    }
+
+    .icon.blue {
+      background: linear-gradient(135deg, #E8F0FA, #D8E8F8);
+      color: var(--azul-2);
+    }
+
+    .icon.green {
+      background: linear-gradient(135deg, #E7F8F6, #D4F5F2);
+      color: var(--verde);
+    }
+
+    .icon.purple {
+      background: linear-gradient(135deg, #F0E8FA, #E4D8F8);
+      color: #7C3AED;
+    }
+
+    .icon.orange {
+      background: linear-gradient(135deg, #FFF4E8, #FFE8D0);
+      color: #E67E22;
+    }
+
+    .icon.teal {
+      background: linear-gradient(135deg, #E0F7F6, #CCF0EE);
+      color: #0D9488;
+    }
+
+    .icon.rose {
+      background: linear-gradient(135deg, #FFE8EE, #FFD0DC);
+      color: #E11D48;
+    }
+
+    .icon.indigo {
+      background: linear-gradient(135deg, #E8ECFA, #D8E0F8);
+      color: #4F46E5;
+    }
+
+    .icon.slate {
+      background: linear-gradient(135deg, #F1F5F9, #E2E8F0);
+      color: #475569;
+    }
+
+    .card:hover .icon {
+      transform: scale(1.08);
+    }
+
+    .card h3 {
+      color: var(--azul);
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .card p {
+      color: var(--cinza);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .arrow {
+      margin-top: 18px;
+      color: var(--azul-2);
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .arrow i {
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .card:hover .arrow {
+      color: var(--azul);
+    }
+
+    .card:hover .arrow i {
+      transform: translateX(3px);
+    }
+
+   .card.coming-soon {
+  pointer-events: none;
+  position: relative;
+  opacity: 0.6;
+}
+.card.coming-soon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-lg);
+  z-index: 2;
+}
+.card.coming-soon .arrow {
+  display: none;
+}
+.card.coming-soon .card-content {
+  filter: grayscale(0.3);
+}
+.coming-soon-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #FFF4E8, #FFE8D0);
+  color: #B45309;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(180, 83, 9, 0.15);
+}
+.coming-soon-badge i {
+  font-size: 10px;
+}
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--borda);
+      padding: 28px 0;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--azul);
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--borda);
+    }
+
+    .footer-copy {
+      color: var(--cinza-2);
+      font-size: 13px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      color: var(--cinza);
+      font-size: 13px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--azul-2);
+    }
+
+    /* Center Hero */
+    .center-hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .center-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(227, 234, 242, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--verde-2);
+      margin-bottom: 28px;
+      animation: fadeUp 0.8s ease-out both;
+    }
+
+    .center-hero-badge i {
+      font-size: 10px;
+    }
+
+    .center-hero-logo {
+      width: clamp(180px, 25vw, 280px);
+      height: auto;
+      margin-bottom: 24px;
+      animation: fadeUp 0.8s ease-out both;
+      filter: drop-shadow(0 4px 20px rgba(0, 92, 230, 0.15));
+    }
+
+    .center-hero h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 800;
+      color: var(--azul);
+      letter-spacing: -2.5px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      max-width: 750px;
+      animation: fadeUp 0.8s ease-out 0.15s both;
+    }
+
+    .center-hero h1 span {
+      background: linear-gradient(135deg, var(--azul-2), var(--verde));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .center-hero p {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--cinza);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+      animation: fadeUp 0.8s ease-out 0.3s both;
+    }
+
+    .center-hero-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--azul-2), #0046B8);
+      color: white;
+      padding: 18px 36px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(0, 92, 230, 0.35);
+      transition: var(--transition);
+      animation: fadeUp 0.8s ease-out 0.45s both;
+      border: none;
+      cursor: pointer;
+    }
+
+    .center-hero-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 14px 40px rgba(0, 92, 230, 0.45);
+    }
+
+    .center-hero-btn i {
+      font-size: 14px;
+      transition: transform 0.25s;
+    }
+
+    .center-hero-btn:hover i {
+      transform: translateX(4px);
+    }
+
+    .center-hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--cinza-2);
+      font-size: 12px;
+      font-weight: 500;
+      animation: fadeUp 0.8s ease-out 0.6s both;
+      cursor: pointer;
+      pointer-events: auto;
+      text-decoration: none;
+    }
+
+    .center-hero-scroll i {
+      animation: bounce 2s infinite;
+      font-size: 16px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px 0;
+      }
+
+      .header-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .hero-content,
+      .side-panel {
+        padding: 28px 24px;
+        border-radius: var(--radius);
+      }
+
+      .quick-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .footer-left {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-divider {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <div class="center-hero">
+    <img src="logo_topo.png" alt="Logo MoverCare" class="center-hero-logo">
+    <div class="center-hero-badge">
+      <i class="fas fa-bolt"></i>
+      Portal MoverCare
+    </div>
+    <h1>Transporte hospitalar <span>inteligente e conectado</span></h1>
+    <p>Acesse os sistemas de gestao de transporte de pacientes de forma rapida, segura e profissional.</p>
+    <a href="#acessos" class="center-hero-btn">
+      Acessar sistemas
+      <i class="fas fa-arrow-down"></i>
+    </a>
+    <a href="#acessos" class="center-hero-scroll">
+      Explorar
+      <i class="fas fa-chevron-down"></i>
+    </a>
+  </div>
+
+  <header class="container">
+    <a href="#" class="brand-logo">
+      <img src="logo_topo.png" alt="Logo MoverCare" class="brand-img">
+    </a>
+    <div class="header-right">
+      <div class="status">
+        <div class="status-dot"></div>
+        Sistema operacional
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <img class="hero-logo" src="movercare-logo.png" alt="MoverCare">
+        <div class="tag">
+          <i class="fas fa-bolt"></i>
+          Acesso rapido
+        </div>
+        <h1>Portal centralizado para acesso aos sistemas MoverCare</h1>
+        <p>
+          Encontre em um unico local os principais acessos, ferramentas internas,
+          noticias e canais de suporte. Uma pagina simples, direta e profissional
+          para funcionarios, parceiros e clientes.
+        </p>
+        <div class="quick-buttons">
+          <a class="main-btn" href="https://mover-care-one.vercel.app/">
+            <i class="fas fa-user-tie"></i>
+            Coordenador
+            <i class="fas fa-arrow-right"></i>
+          </a>
+          <a class="main-btn green" href="https://mover-care-enf.vercel.app/">
+            <i class="fas fa-user-nurse"></i>
+            Enfermagem
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      <aside class="side-panel">
+        <h2><i class="fas fa-bullhorn"></i> Avisos importantes</h2>
+        <div class="notice">
+          <div class="notice-header">
+            <div class="notice-icon blue">
+              <i class="fas fa-headset"></i>
+            </div>
+            <strong>Sistema de chamados ativo</strong>
+          </div>
+          <span>Solicitacoes de transporte podem ser acompanhadas em tempo real pelos paineis autorizados.</span>
+        </div>
+        <div class="notice">
+          <div class="notice-header">
+            <div class="notice-icon green">
+              <i class="fas fa-shield-halved"></i>
+            </div>
+            <strong>Uso interno</strong>
+          </div>
+          <span>Este portal reune links oficiais para facilitar o acesso seguro as ferramentas do MoverCare.</span>
+        </div>
+        <div class="notice">
+          <div class="notice-header">
+            <div class="notice-icon orange">
+              <i class="fas fa-circle-info"></i>
+            </div>
+            <strong>Suporte</strong>
+          </div>
+          <span>Em caso de dificuldade de acesso, utilize o canal de suporte disponivel abaixo.</span>
+        </div>
+      </aside>
+    </section>
+
+    <section id="acessos">
+      <div class="section-title">
+        <h2>Acessos rapidos</h2>
+        <p>Escolha abaixo o sistema ou ferramenta que deseja acessar.</p>
+      </div>
+      <div class="grid">
+        <a href="https://mover-care-one.vercel.app/" class="card">
+          <div>
+            <div class="icon blue">
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <h3>Coordenador</h3>
+            <p>Acompanhe chamados, equipe, status dos maqueiros, historico e indicadores operacionais.</p>
+          </div>
+          <div class="arrow">Entrar no painel <i class="fas fa-arrow-right"></i></div>
+        </a>
+
+        <a href="https://mover-care-enf.vercel.app/" class="card">
+          <div>
+            <div class="icon green">
+              <i class="fas fa-user-nurse"></i>
+            </div>
+            <h3>Enfermagem</h3>
+            <p>Solicite transporte de pacientes informando origem, destino, prioridade e observacoes.</p>
+          </div>
+          <div class="arrow">Solicitar transporte <i class="fas fa-arrow-right"></i></div>
+        </a>
+
+        <div class="card coming-soon">
+          <div class="coming-soon-badge"><i class="fas fa-lock"></i> Em breve</div>
+          <div class="card-content">
+            <div class="icon indigo">
+              <i class="fas fa-newspaper"></i>
+            </div>
+            <h3>Noticias</h3>
+            <p>Veja comunicados, atualizacoes internas e informacoes importantes para a equipe.</p>
+          </div>
+          <div class="arrow">Ver comunicados <i class="fas fa-arrow-right"></i></div>
+        </div>
+
+        <div class="card coming-soon">
+          <div class="coming-soon-badge"><i class="fas fa-lock"></i> Em breve</div>
+          <div class="card-content">
+            <div class="icon purple">
+              <i class="fas fa-clock-rotate-left"></i>
+            </div>
+            <h3>Historico</h3>
+            <p>Consulte registros de transportes, etapas concluidas e atendimentos realizados.</p>
+          </div>
+          <div class="arrow">Consultar historico <i class="fas fa-arrow-right"></i></div>
+        </div>
+
+        <div class="card coming-soon">
+          <div class="coming-soon-badge"><i class="fas fa-lock"></i> Em breve</div>
+          <div class="card-content">
+            <div class="icon teal">
+              <i class="fas fa-file-lines"></i>
+            </div>
+            <h3>Documentos</h3>
+            <p>Acesse manuais, orientacoes, protocolos e arquivos institucionais.</p>
+          </div>
+          <div class="arrow">Abrir documentos <i class="fas fa-arrow-right"></i></div>
+        </div>
+
+        <div class="card coming-soon">
+          <div class="coming-soon-badge"><i class="fas fa-lock"></i> Em breve</div>
+          <div class="card-content">
+            <div class="icon orange">
+              <i class="fas fa-screwdriver-wrench"></i>
+            </div>
+            <h3>Ferramentas</h3>
+            <p>Atalhos para sistemas internos, relatorios, paineis e utilidades operacionais.</p>
+          </div>
+          <div class="arrow">Acessar ferramentas <i class="fas fa-arrow-right"></i></div>
+        </div>
+
+        <div class="card coming-soon">
+          <div class="coming-soon-badge"><i class="fas fa-lock"></i> Em breve</div>
+          <div class="card-content">
+            <div class="icon rose">
+              <i class="fas fa-life-ring"></i>
+            </div>
+            <h3>Suporte</h3>
+            <p>Entre em contato para ajuda com acesso, duvidas tecnicas ou problemas no sistema.</p>
+          </div>
+          <div class="arrow">Falar com suporte <i class="fas fa-arrow-right"></i></div>
+        </div>
+
+        <div class="card coming-soon">
+          <div class="coming-soon-badge"><i class="fas fa-lock"></i> Em breve</div>
+          <div class="card-content">
+            <div class="icon slate">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Relatorios</h3>
+            <p>Acesse indicadores, produtividade, tempo medio de atendimento e dados gerenciais.</p>
+          </div>
+          <div class="arrow">Ver relatorios <i class="fas fa-arrow-right"></i></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-left">
+          <span class="footer-brand">MoverCare</span>
+          <div class="footer-divider"></div>
+          <span class="footer-copy">2026 — Portal centralizado de acesso rapido</span>
+        </div>
+        <div class="footer-links">
+          <a href="#">Politica de Privacidade</a>
+          <a href="#">Termos de Uso</a>
+          <a href="#">Suporte</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let mouse = { x: null, y: null, radius: 150 };
+    let particles = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseout', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 2.5 + 0.5;
+        this.baseX = this.x;
+        this.baseY = this.y;
+        this.density = Math.random() * 30 + 1;
+        this.opacity = Math.random() * 0.4 + 0.1;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.color = Math.random() > 0.5
+          ? `rgba(0, 92, 230, ${this.opacity})`
+          : `rgba(0, 169, 157, ${this.opacity})`;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < mouse.radius) {
+            const force = (mouse.radius - dist) / mouse.radius;
+            const angle = Math.atan2(dy, dx);
+            this.x -= Math.cos(angle) * force * this.density * 0.6;
+            this.y -= Math.sin(angle) * force * this.density * 0.6;
+          }
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      const count = Math.min(Math.floor((width * height) / 12000), 120);
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle());
+      }
+    }
+    initParticles();
+
+    function connectParticles() {
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a + 1; b < particles.length; b++) {
+          const dx = particles[a].x - particles[b].x;
+          const dy = particles[a].y - particles[b].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            const opacity = (1 - dist / 120) * 0.15;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 92, 230, ${opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particles[a].x, particles[a].y);
+            ctx.lineTo(particles[b].x, particles[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      for (const p of particles) {
+        p.update();
+        p.draw();
+      }
+      connectParticles();
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    document.querySelectorAll('.bg-orb').forEach((orb) => {
+      window.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 30;
+        const y = (e.clientY / window.innerHeight - 0.5) * 30;
+        orb.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+  </script>
+</body>
+</html>
